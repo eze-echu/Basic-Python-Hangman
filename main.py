@@ -23,9 +23,10 @@ def check_for_letter(word: str, letter: str) -> list | None:
 
 if __name__ == "__main__":
     difficulty = 0
-    while difficulty not in [1, 2, 3]:
+    while difficulty not in [1, 2, 3, 4]:
         difficulty = int(input("What difficulty would you like to play? \n"
-                               "[1] Easy (3-6 letters) [2] Medium (7-9 letters) [3] Hard (>10 letters)\n"))
+                               "[1] Easy (3-6 letters) [2] Medium (7-9 letters) "
+                               "[3] Hard (10-14 letters) [4] Extreme (>15)\n"))
         print(colorama.ansi.clear_screen())
     word = random.choice(list(words))
     match difficulty:
@@ -36,7 +37,10 @@ if __name__ == "__main__":
             while len(word) < 7 or len(word) > 10:
                 word = random.choice(list(words))
         case 3:
-            while len(word) < 10:
+            while len(word) < 10 or len(word) > 14:
+                word = random.choice(list(words))
+        case 4:
+            while len(word) < 14:
                 word = random.choice(list(words))
     print(f"The word has {len(word)} letters.")
     solved = False
