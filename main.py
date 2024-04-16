@@ -1,7 +1,10 @@
 import random
 import colorama
+import re
+from english_words import get_english_words_set
 
-words = ["platypus", "kangaroo", "master"]
+
+words = get_english_words_set(["web2"], lower=True)
 
 
 def check_for_letter(word: str, letter: str) -> list | None:
@@ -19,10 +22,26 @@ def check_for_letter(word: str, letter: str) -> list | None:
 
 
 if __name__ == "__main__":
-    word = random.choice(words)
+    difficulty = 0
+    while difficulty not in [1, 2, 3]:
+        difficulty = int(input("What difficulty would you like to play? \n"
+                               "[1] Easy (3-6 letters) [2] Medium (7-9 letters) [3] Hard (>10 letters)\n"))
+        print(colorama.ansi.clear_screen())
+    word = random.choice(list(words))
+    match difficulty:
+        case 1:
+            while len(word) > 6:
+                word = random.choice(list(words))
+        case 2:
+            while len(word) < 7 or len(word) > 10:
+                word = random.choice(list(words))
+        case 3:
+            while len(word) < 10:
+                word = random.choice(list(words))
     print(f"The word has {len(word)} letters.")
     solved = False
     failed = False
+    lives = 5
     guessed_letters = []
     display_word = ""
     for character in word:
@@ -31,10 +50,12 @@ if __name__ == "__main__":
         else:
             display_word += " _ "
     while not solved and not failed:
-        print(display_word)
+        print(colorama.ansi.clear_screen(),end="")
+        print(colorama.Style.RESET_ALL, display_word)
+        print(f"You have {lives} guesses left.")
         print(f"Guessed letters: {guessed_letters}")
         letter = input("Enter a letter: ")
-        if letter not in guessed_letters or len(letter) != 1:
+        if letter not in guessed_letters and re.match("^[a-zA-Z]$", letter):
             guessed_letters.append(letter)
             result = check_for_letter(word, letter)
             if result:
@@ -48,10 +69,16 @@ if __name__ == "__main__":
                     solved = True
             else:
                 print(colorama.Fore.YELLOW, f"letter {letter} not found in word.")
+                lives -= 1
+                if lives == 0:
+                    failed = True
         elif letter in guessed_letters:
             print(colorama.Fore.RED, f"You have already guessed {letter}")
-            print(colorama.Style.RESET_ALL)
-        elif len(letter) != 1:
-            print(colorama.Fore.RED, f"You must guess a single letter", colorama.Style.RESET_ALL)
-            print(colorama.Style.RESET_ALL)
-
+        elif not re.match("^[a-zA-Z]$", letter):
+            print(colorama.Fore.RED, f"Input must me only a single alphabetical value")
+    if not failed:
+        print(colorama.Fore.GREEN, f"The word was {word}!")
+        print(colorama.Fore.GREEN, f"Word Guessed in {len(guessed_letters)} attempts.")
+    else:
+        print(colorama.Fore.RED, f"The word was {word}!")
+        print(colorama.Fore.RED, "Game Over!")
