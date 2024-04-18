@@ -21,6 +21,16 @@ def check_for_letter(word: str, letter: str) -> list | None:
     return occurrences if is_present else None
 
 
+def update_display_word(word: str, guessed_letters: list) -> str | None:
+    display_word = ""
+    for character in word:
+        if character in guessed_letters:
+            display_word += f" {character} "
+        else:
+            display_word += " _ "
+    return display_word
+
+
 if __name__ == "__main__":
     difficulty = 0
     while difficulty not in ["1", "2", "3", "4"]:
@@ -48,12 +58,7 @@ if __name__ == "__main__":
     failed = False
     lives = 5
     guessed_letters = []
-    display_word = ""
-    for character in word:
-        if character in guessed_letters:
-            display_word += f" {character} "
-        else:
-            display_word += " _ "
+    display_word = update_display_word(word, guessed_letters)
     while not solved and not failed:
         print(colorama.ansi.clear_screen(),end="")
         print(colorama.Style.RESET_ALL, display_word)
@@ -64,12 +69,7 @@ if __name__ == "__main__":
             guessed_letters.append(letter)
             result = check_for_letter(word, letter)
             if result:
-                display_word = ""
-                for character in word:
-                    if character in guessed_letters:
-                        display_word += f" {character} "
-                    else:
-                        display_word += " _ "
+                display_word = update_display_word(word, guessed_letters)
                 if "_" not in display_word:
                     solved = True
             else:
